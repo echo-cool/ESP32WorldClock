@@ -275,18 +275,17 @@ void ParseDigits(Timezone &tz)
     digs[2]->NewValue(minute(local) / 10);
     digs[3]->NewValue(minute(local) % 10);
 }
-
 uint16_t getDayNightColor(Timezone &tz)
 {
     time_t local = tz.now();
     int hr = hour(local);
-    
-    // Day time: 6 AM to 6 PM (white/bright colors)
-    // Night time: 6 PM to 6 AM (dimmer/warmer colors)
+
     if (hr >= 6 && hr < 18) {
-        return TFT_WHITE;    // Day time - bright white
+        return TFT_ORANGE;      // Daytime (6 AM - 6 PM)
+    } else if (hr >= 18 && hr < 24) {
+        return TFT_LIGHTGREY;        // Evening (6 PM - 12 AM)
     } else {
-        return TFT_ORANGE;   // Night time - warm orange
+        return TFT_DARKGREY;   // Night (12 AM - 6 AM)
     }
 }
 
@@ -294,13 +293,16 @@ uint16_t getDayNightLabelColor(Timezone &tz)
 {
     time_t local = tz.now();
     int hr = hour(local);
-    
+
     if (hr >= 6 && hr < 18) {
-        return TFT_CYAN;     // Day time - bright cyan
+        return TFT_YELLOW;      // Daytime
+    } else if (hr >= 18 && hr < 24) {
+        return TFT_LIGHTGREY;        // Evening
     } else {
-        return TFT_YELLOW;   // Night time - warm yellow
+        return TFT_DARKGREY;    // Night
     }
 }
+
 
 String getMarketStatus(WorldClockZone &zone)
 {
@@ -813,8 +815,8 @@ void rollingClockSetup(bool is24Hour, bool notUsDate)
             
             // Try to set the timezone
             if (worldZones[i].tz.setLocation(worldZones[i].timezone)) {
-                // Wait a moment for timezone to stabilize
-                delay(500);
+                // // Wait a moment for timezone to stabilize
+                // delay(500);
                 
                 // Verify the timezone was set correctly
                 time_t local = worldZones[i].tz.now();
